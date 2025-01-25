@@ -3,3 +3,4 @@ client/src-backup/**
 **/.env
 **/bundle.js
 **/dist/**
+**/.codesync
