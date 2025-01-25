@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ProjectDirectory, MetaDirectory } from '../app';
+import { ProjectDirectory, MetaDirectory, CurrentProject } from '../app';
 import { CommandExecutor } from '../commands/CommandExecutor';
 import { RemoteUtils } from '../remote/RemoteUtils';
 import chalk from 'chalk';
@@ -38,6 +38,14 @@ export namespace LocalUtils {
 
         console.log();
         console.log(" Project initialized!\nRemote URL: " + chalk.greenBright(data.remote));
+    }
+
+    export function printProjectOverview() {
+        const project = CurrentProject.getLocal();
+        console.log(" ID: " + chalk.yellowBright(project.id));
+        console.log(" Name: " + chalk.yellowBright(project.getName()));
+        console.log(" Files: " + chalk.yellowBright(project.getFiles().length));
+        console.log(" Path: " + chalk.yellowBright(project.path));
     }
 
     export function printLocalPrograms() {

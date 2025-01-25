@@ -18,9 +18,10 @@ export namespace CommandExecutor {
     const CommandsList: Record<string, string> = {
         "help": "Get list of commands with their descriptions",
         "init": "Initialize a project locally and remotely",
+        "overview": "Get basic information about the current project",
         "list": "List files in the current project",
         "list-projects": "List all projects available locally",
-        "push": "Upload changes to the server",
+        "push [--watch]": "Upload changes to the server",
         "push-all": "Upload changes of all local projects to the server",
         "fetch": "Download changes from the server",
         "fetch-all": "Download changes from the server for all projects available locally",
@@ -56,6 +57,7 @@ export namespace CommandExecutor {
                 }
                 break;
             }
+            case "overview": LocalUtils.printProjectOverview(); break;
             case "push-all": await SyncUtils.push(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
             case "fetch": await SyncUtils.fetch([CurrentProject]); break;
             case "fetch-all": await SyncUtils.fetch(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
