@@ -9,6 +9,7 @@ import { glob } from "glob";
 import { CodeSync } from "../app/App";
 import { Project } from "../app/Project";
 import open from 'open';
+import { FileWatcher } from "../local/FileWatcher";
 
 export namespace CommandExecutor {
 
@@ -46,7 +47,15 @@ export namespace CommandExecutor {
             case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles([CurrentProject])); break;
             case "list-all": await SyncUtils.printDiff(await SyncUtils.compareFiles(CodeSync.getLocalProjects().map(l => new Project(l.path))), true); break;
             case "list-projects": LocalUtils.printLocalPrograms(); break;
-            case "push": await SyncUtils.push([CurrentProject]); break;
+            case "push": {
+                if (args.length > 0 && args[0] === "--watch") {
+                    new FileWatcher(CurrentProject).watch();
+                } else {
+                    console.log(args);
+                    await SyncUtils.push([CurrentProject]);
+                }
+                break;
+            }
             case "push-all": await SyncUtils.push(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
             case "fetch": await SyncUtils.fetch([CurrentProject]); break;
             case "fetch-all": await SyncUtils.fetch(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
