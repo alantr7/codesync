@@ -5,7 +5,7 @@ I had to zip all the projects, and then somehow (usually Google Drive) copy them
 I had found some programs that could do something like this, but they usually require both devices to be powered on and connected to the same Wi-Fi and I didn't like that much. I wanted to be able
 to sync files whenever I wanted regardless of device being turned on or off.
 
-**Still working on the README file. Some parts will be filled in, some parts changed (like npm run dev).
+**Still working on the README file. Some parts will be filled in, some parts changed (like npm run dev).**
 
 ## How does it work?
 Whenever you are coding or working on a project, at the end of your coding session you do "codesync push". This will upload all changes to the server and then you can download these files on any other device
