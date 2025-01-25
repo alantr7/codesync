@@ -13,7 +13,7 @@ export namespace SyncUtils {
     export async function compareFiles(): Promise<Comparison[]> {
         const remoteFiles = await (await CurrentProject.getRemote() as RemoteProject).getFiles() as RemoteFile[];
 
-        const local = arrayToDict(LocalUtils.getFiles([]), f => f.path);
+        const local = arrayToDict(CurrentProject.getLocal().getFiles(), f => f.path);
         const remote = arrayToDict(remoteFiles, f => f.path);
 
         const blacklist: string[] = [];

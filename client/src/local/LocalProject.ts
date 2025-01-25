@@ -35,7 +35,7 @@ export class LocalProject {
         fs.writeFileSync(`${MetaDirectory}/knownfiles.json`, JSON.stringify(patterns));
     }
 
-    getFiles(ignorePatterns: string[] = this.getKnownFiles()): LocalFile[] {
+    getFiles(ignorePatterns: string[] = this.getIgnorePatterns()): LocalFile[] {
         return LocalUtils.getFiles(ignorePatterns);
     }
 

@@ -29,8 +29,8 @@ export namespace LocalUtils {
             fs.mkdirSync(MetaDirectory);
         }
         fs.writeFileSync(`${MetaDirectory}/project.json`, JSON.stringify(data));
-        fs.writeFileSync(`${MetaDirectory}/ignore.json`, '');
-        fs.writeFileSync(`${MetaDirectory}/filemap.json`, '');
+        fs.writeFileSync(`${MetaDirectory}/ignore.json`, '[]');
+        fs.writeFileSync(`${MetaDirectory}/filemap.json`, '{}');
         fs.writeFileSync(`${MetaDirectory}/knownfiles.json`, '[]');
 
         await RemoteUtils.createProject(name);
