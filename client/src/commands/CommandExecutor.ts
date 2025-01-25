@@ -12,13 +12,25 @@ export namespace CommandExecutor {
 
     export const scanner = readline.createInterface(process.stdin, process.stdout);
 
+    const CommandsList: Record<string, string> = {
+        "help": "Get list of commands with their descriptions",
+        "init": "Initialize a project locally and remotely",
+        "list": "List files in the current project",
+        "list-projects": "List all projects available locally",
+        "push": "Upload changes to the server",
+        "push-all": "Upload changes of all local projects to the server",
+        "fetch": "Download changes from the server",
+        "fetch-all": "Download changes from the server for all projects available locally",
+        "delete": "Delete data about this project both locally and on the server (This will not delete project files!)"
+    };
+
     export async function question(question: string): Promise<string> {
         return new Promise((resolve, reject) => scanner.question(question, resolve));
     }
 
     export async function execute(args: string[]) {
         if (args.length === 0) {
-            console.error('No arguments provided!');
+            console.error(chalk.redBright(' No arguments provided!') + '\n Available commands: ' + chalk.yellow(Object.keys(CommandsList).join(', ')));
             scanner.close();
             return;
         }
@@ -27,6 +39,7 @@ export namespace CommandExecutor {
         args.splice(0, 1);
 
         switch (command) {
+            case "help": executeHelpCommand(); break;
             case "init": await LocalUtils.initializeProject(); break;
             case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles()); break;
             case "list-projects": LocalUtils.printLocalPrograms(); break;
@@ -41,6 +54,10 @@ export namespace CommandExecutor {
         scanner.close();
     }
 
-
+    function executeHelpCommand() {
+        for (const name in CommandsList) {
+            console.log(" " + chalk.yellowBright(name) + ": " + CommandsList[name]);
+        }
+    }
 
 }
