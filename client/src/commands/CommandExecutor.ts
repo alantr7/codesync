@@ -7,6 +7,7 @@ import { LocalUtils } from "../local/LocalUtils";
 import { SyncUtils } from "../sync/SyncUtils";
 import { glob } from "glob";
 import { CodeSync } from "../app/App";
+import { Project } from "../app/Project";
 
 export namespace CommandExecutor {
 
@@ -41,14 +42,15 @@ export namespace CommandExecutor {
         switch (command) {
             case "help": executeHelpCommand(); break;
             case "init": await LocalUtils.initializeProject(); break;
-            case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles()); break;
+            case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles([CurrentProject])); break;
+            case "list-all": await SyncUtils.printDiff(await SyncUtils.compareFiles(CodeSync.getLocalProjects().map(l => new Project(l.path))), true); break;
             case "list-projects": LocalUtils.printLocalPrograms(); break;
-            case "push": await SyncUtils.push(); break;
-            case "push-all": await SyncUtils.pushAll(); break;
-            case "fetch": await SyncUtils.fetch(); break;
-            case "fetch-all": await SyncUtils.fetchAll(); break;
+            case "push": await SyncUtils.push([CurrentProject]); break;
+            case "push-all": await SyncUtils.push(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
+            case "fetch": await SyncUtils.fetch([CurrentProject]); break;
+            case "fetch-all": await SyncUtils.fetch(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
             case "delete": await (await CurrentProject.getRemote())?.delete(); break;
-            default: console.log(chalk.redBright(' Command not recognized.') + '\n Available commands: ' + chalk.yellow('init, list, push, fetch.'));
+            default: console.log(chalk.redBright(' Command not recognized.') + '\n Available commands: ' + chalk.yellow(Object.keys(CommandsList).join(', ')));
         }
 
         scanner.close();

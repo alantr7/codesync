@@ -7,6 +7,7 @@ import { LocalFile } from './LocalFile';
 import { glob } from 'glob';
 import { CodeSync } from '../app/App';
 import asTable from 'as-table';
+import { LocalProject } from './LocalProject';
 
 export namespace LocalUtils {
 
@@ -44,11 +45,12 @@ export namespace LocalUtils {
         console.log(asTable(projects.map(proj => ({" Id": " " + proj.id, Name: proj.name, Path: proj.path}))));
     }
 
-    export function getFiles(ignorePatterns: string[]): LocalFile[] {
+    export function getFiles(project: LocalProject, directory: string, ignorePatterns: string[]): LocalFile[] {
         return glob.globSync("**", {
             ignore: [...ignorePatterns, ".codesync/**", "**/node_modules/**"],
-            nodir: true
-        }).map(path => new LocalFile(path));
+            nodir: true,
+            cwd: directory,
+        }).map(path => new LocalFile(project, path));
     }
 
     export function getAbsolutePath(path: string) {

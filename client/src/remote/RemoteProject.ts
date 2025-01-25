@@ -10,8 +10,8 @@ export class RemoteProject {
         return await RemoteUtils.getFiles(this.id);
     }
 
-    async createFile(path: string): RemoteResponse<RemoteFile> {
-        return await RemoteUtils.createFile(this.id, path);
+    async createFiles(paths: string[]): RemoteResponse<RemoteFile[]> {
+        return await RemoteUtils.createFile(this.id, paths);
     }
 
     async delete(): RemoteResponse<any> {

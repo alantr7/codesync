@@ -1,3 +1,5 @@
+import { Project } from "../app/Project"
+
 export enum ComparisonResult {
     REMOTE_NEW,
     LOCAL_NEW,
@@ -13,5 +15,6 @@ export enum ComparisonResult {
 
 export interface Comparison {
     path: string,
+    project: Project,
     result: ComparisonResult
 }

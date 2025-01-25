@@ -29,14 +29,13 @@ export function setupFilesController(app: typeof _app) {
 
     app.post('/api/projects/:ownerId/:projectId/files', async (req, res) => {
         const { ownerId, projectId } = req.params;
-        const { path } = req.body;
-        if (path === undefined) {
+        const { files } = req.body;
+        if (files === undefined) {
             res.json({
-                error: 'Path is not specified.'
+                error: 'Files not specified.'
             });
             return;
         }
-        const name = path.includes('/') ? path.substring(path.indexOf('/') + 1) : path;
 
         // Check if project exists
         const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
@@ -45,21 +44,29 @@ export function setupFilesController(app: typeof _app) {
             return;
         }
 
-        // Check if file already exists
-        if (await FileEntity.existsBy({path, project: {id: ownerId + '/' + projectId}})) {
-            res.status(400).json({error: "File already exists."});
-            return;
+        const result: FileEntity[] = [];
+        
+        for (const path of (files as string[])) {
+            const name = path.includes('/') ? path.substring(path.lastIndexOf('/') + 1) : path;
+
+            // Check if file already exists
+            const existing = await FileEntity.findOneBy({path, project: { id: ownerId + '/' + projectId }});
+            if (existing) {
+                result.push(existing);
+                return;
+            }
+
+            const file = new FileEntity();
+            file.id = uuid();
+            file.project = project;
+            file.name = name;
+            file.path = path;
+            file.last_modified = 0;
+            result.push(file);
         }
 
-        const file = new FileEntity();
-        file.id = uuid();
-        file.project = project;
-        file.name = name;
-        file.path = path;
-        file.last_modified = 0;
-
-        await file.save();
-        res.json(file);
+        await FileEntity.save(result);
+        res.json(result);
     });
 
     // File uploading

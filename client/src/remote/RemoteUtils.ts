@@ -56,9 +56,9 @@ export namespace RemoteUtils {
         return (response.data as any[]).map(d => Mapper.map(d, Mapper.RemoteFileMapper(projectId)));
     }
 
-    export async function createFile(projectId: string, path: string): RemoteResponse<RemoteFile> {
-        const response = await api.post(`projects/${projectId}/files`, { path });
-        return Mapper.map(response.data, Mapper.RemoteFileMapper(projectId));
+    export async function createFile(projectId: string, paths: string[]): RemoteResponse<RemoteFile[]> {
+        const response = await api.post(`projects/${projectId}/files`, { files: paths });
+        return (response.data as any[]).map(file => Mapper.map(file, Mapper.RemoteFileMapper(projectId)));
     }
 
     export async function uploadFile(projectId: string, fileId: string, localPath: string): RemoteResponse<RemoteFile> {
