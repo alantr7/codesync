@@ -138,19 +138,17 @@ export function setupFilesController(app: typeof _app) {
             return;
         }
 
-        const directoryPath = `${__dirname}/storage`;
-        const destination = `${directoryPath}/${fileId}.bin`;
-        if (!fs.existsSync(directoryPath) || !fs.existsSync(destination)) {
-            res.status(404).json({ error: "File not found." });
-            return;
-        }
-
         file.last_modified = Date.now();
         file.is_deleted = true;
         file.size = 0;
         await file.save();
 
-        fs.rmSync(destination);
+        const directoryPath = `${__dirname}/storage`;
+        const destination = `${directoryPath}/${fileId}.bin`;
+        if (fs.existsSync(directoryPath) && fs.existsSync(destination)) {
+            fs.rmSync(destination);
+        }
+
         res.status(200).json({
             message: "File deleted."
         });
