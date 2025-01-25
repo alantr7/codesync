@@ -8,6 +8,7 @@ import { SyncUtils } from "../sync/SyncUtils";
 import { glob } from "glob";
 import { CodeSync } from "../app/App";
 import { Project } from "../app/Project";
+import open from 'open';
 
 export namespace CommandExecutor {
 
@@ -49,6 +50,10 @@ export namespace CommandExecutor {
             case "push-all": await SyncUtils.push(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
             case "fetch": await SyncUtils.fetch([CurrentProject]); break;
             case "fetch-all": await SyncUtils.fetch(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
+            case "ignore":
+                console.log(chalk.yellowBright(" Opening ignore.json file."));
+                open(`${CurrentProject.path}\\.codesync\\ignore.json`);
+                break;
             case "delete": await (await CurrentProject.getRemote())?.delete(); break;
             default: console.log(chalk.redBright(' Command not recognized.') + '\n Available commands: ' + chalk.yellow(Object.keys(CommandsList).join(', ')));
         }
