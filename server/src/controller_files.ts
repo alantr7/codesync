@@ -145,7 +145,7 @@ export function setupFilesController(app: typeof _app) {
             return;
         }
 
-        file.last_modified = 0;
+        file.last_modified = Date.now();
         file.is_deleted = true;
         file.size = 0;
         await file.save();
