@@ -23,7 +23,7 @@ export namespace LocalUtils {
         const data = {
             id: "alantr7/" + name,
             name,
-            remote: `${process.env.REMOTE_BASE_URL}/alantr/${name}`
+            remote: `${process.env.REMOTE_BASE_URL}/alantr7/${name}`
         }
 
         if (!fs.existsSync(MetaDirectory)) {

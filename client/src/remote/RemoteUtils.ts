@@ -74,9 +74,11 @@ export namespace RemoteUtils {
         return Mapper.map(response.data, Mapper.RemoteFileMapper(projectId));
     }
 
-    export async function downloadFile(projectId: string, fileId: string, destination: string, last_modified: number): RemoteResponse<any> {
+    export async function downloadFile(projectId: string, fileId: string, destination_raw: string, last_modified: number): RemoteResponse<any> {
         const response = await api.get(`projects/${projectId}/files/${fileId}/content`, { headers: undefined, responseType: "stream" });
         const data = response.data as any;
+
+        const destination = destination_raw.replace(/\\/g, '/');
 
         const directories = path.dirname(destination);
         if (!fs.existsSync(directories)) {
