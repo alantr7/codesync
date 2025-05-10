@@ -57,7 +57,7 @@ export namespace LocalUtils {
         return glob.globSync("**", {
             ignore: [...ignorePatterns, ".codesync/**", "**/node_modules/**"],
             nodir: true,
-            cwd: directory,
+            cwd: directory
         }).map(path => new LocalFile(project, path));
     }
 

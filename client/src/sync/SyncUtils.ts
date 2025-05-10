@@ -216,7 +216,7 @@ export namespace SyncUtils {
         for (const queue of queueFlat) {
             for (const item of queue.toUpdate) {
                 const file = queue.remoteFiles[item];
-                updateManager.queue(() => file.uploadFile(queue.project.path + '\\' + item));
+                updateManager.queue(() => file.uploadFile(queue.project.path + '/' + item));
             }
         }
         await updateManager.perform();
