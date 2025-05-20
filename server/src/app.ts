@@ -4,8 +4,10 @@ import { setupProjectsController } from './controller_projects';
 import { setupDatabase } from './datasource';
 import { configDotenv } from 'dotenv';
 import { setupFilesController } from './controller_files';
+import { setupConfig } from './config';
 
 configDotenv();
+setupConfig();
 setupDatabase();
 
 export const app = ex();
