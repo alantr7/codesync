@@ -3,6 +3,7 @@ import { app as _app } from './app';
 import { ProjectEntity } from './entities/ProjectEntity';
 import { FileEntity } from './entities/FileEntity';
 import {v7 as uuid} from 'uuid';
+import mime from 'mime';
 import multer from 'multer';
 import fs from 'fs';
 
@@ -127,8 +128,9 @@ export function setupFilesController(app: typeof _app) {
         const extIndex = file.name.lastIndexOf('.');
         if (extIndex !== -1) {
             const ext = file.name.substring(extIndex + 1).toLowerCase();
-            if (ext === "pdf") {
-                res.setHeader("Content-Type", "application/pdf")
+            const type = mime.lookup(ext);
+            if (type) {
+                res.setHeader("Content-Type", type);
             }
         }
 
