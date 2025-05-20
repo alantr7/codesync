@@ -1,10 +1,10 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useContext, useRef, useState } from "react"
 import type { ProjectFile } from "../types/ProjectFile";
 import { HOST } from "../App";
 import type { ProjectListItem } from "../types/ProjectListItem";
-import axios from 'axios';
 import { matchPath } from "../utils/searchUtils";
 import { getPreviewMode } from "../utils/previewables";
+import { AuthContext } from "../contexts/AuthContext";
 
 const STATUS_READY      = "Ready";
 const STATUS_PROJ_LIST  = "Updating projects list...";
@@ -20,6 +20,7 @@ export default function SearchView() {
     const [query, setQuery] = useState<string>("");
     const [status, setStatus] = useState(STATUS_READY);
     const [isSearching, setSearching] = useState(false);
+    const {axios} = useContext(AuthContext);
     const [hasError, setHasError] = useState(false);
     const [results, setResults] = useState<ProjectFileSearchResult[]>([]);
     const ref = useRef<HTMLInputElement>(null);

@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import type { ProjectFile } from "../types/ProjectFile";
 import { HOST } from "../App";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
 import type { ProjectFolder } from "../types/ProjectFolder";
 import { formatSize } from "../utils/formatSize";
 import { getPreviewMode, type PREVIEW_MODES } from "../utils/previewables";
+import { AuthContext } from "../contexts/AuthContext";
 
 type ProjectViewProjectFile = ProjectFile & {
     preview_mode: PREVIEW_MODES,
@@ -17,6 +17,7 @@ export default function ProjectView() {
     const [currentDirectory, setCurrentDirectory] = useState("/");
     const [directoryList, setDirectoryList] = useState<ProjectFolder[]>([]);
     const [fileList, setFileList] = useState<ProjectViewProjectFile[]>([]);
+    const {axios} = useContext(AuthContext);
 
     useEffect(() => {
         axios.get(`${HOST}/api/projects/${ownerId}/${projectId}/files`).then(r => {
@@ -118,7 +119,7 @@ export default function ProjectView() {
                     </td>
                     <td>
                         {file.preview_mode === "BINARY" && file.name}
-                        {file.preview_mode !== "BINARY" && <a href={`/view/${file.preview_mode}/${file.id}`} target="_blank">{file.name}</a>}
+                        {file.preview_mode !== "BINARY" && <a href={`${HOST}/api/projects/${ownerId}/${projectId}/files/${file.id}/view`} target="_blank">{file.name}</a>}
                     </td>
                     <td>
                         <a href="#">Download</a>

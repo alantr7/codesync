@@ -5,6 +5,8 @@ import { setupDatabase } from './datasource';
 import { configDotenv } from 'dotenv';
 import { setupFilesController } from './controller_files';
 import { setupConfig } from './config';
+import { auth } from './auth';
+import { setupAuthController } from './controller_auth';
 
 configDotenv();
 setupConfig();
@@ -16,6 +18,7 @@ app.use(json());
 
 setupProjectsController(app);
 setupFilesController(app);
+setupAuthController(app);
 
 app.listen(process.env.SERVER_PORT, () => {
     console.log("Server started on port " + process.env.SERVER_PORT)

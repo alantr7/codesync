@@ -6,9 +6,10 @@ import {v7 as uuid} from 'uuid';
 import mime from 'mime';
 import multer from 'multer';
 import fs from 'fs';
+import { auth } from './auth';
 
 export function setupFilesController(app: typeof _app) {
-    app.get('/api/projects/:ownerId/:projectId/files', async (req, res) => {
+    app.get('/api/projects/:ownerId/:projectId/files', auth("explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId } = req.params;
 
         const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
@@ -28,7 +29,7 @@ export function setupFilesController(app: typeof _app) {
         res.json(files);
     });
 
-    app.post('/api/projects/:ownerId/:projectId/files', async (req, res) => {
+    app.post('/api/projects/:ownerId/:projectId/files', auth("codesync"), async (req, res) => {
         const { ownerId, projectId } = req.params;
         const { files } = req.body;
         if (files === undefined) {
@@ -71,7 +72,7 @@ export function setupFilesController(app: typeof _app) {
     });
 
     // File uploading
-    app.post('/api/projects/:ownerId/:projectId/files/:fileId/content', multer().single('binary'), async (req, res) => {
+    app.post('/api/projects/:ownerId/:projectId/files/:fileId/content', auth("codesync"), multer().single('binary'), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
         const { last_modified } = req.body;
         const binary = req.file;
@@ -109,7 +110,7 @@ export function setupFilesController(app: typeof _app) {
     });
 
     // File preview
-    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/view`, async (req, res) => {
+    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/view`, auth("explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
@@ -141,7 +142,7 @@ export function setupFilesController(app: typeof _app) {
     });
 
     // File downloading
-    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/content`, async (req, res) => {
+    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/content`, auth("explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
@@ -162,7 +163,7 @@ export function setupFilesController(app: typeof _app) {
     });
 
     // File deleting
-    app.delete(`/api/projects/:ownerId/:projectId/files/:fileId`, async (req, res) => {
+    app.delete(`/api/projects/:ownerId/:projectId/files/:fileId`, auth("codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
