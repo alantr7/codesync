@@ -107,6 +107,37 @@ export function setupFilesController(app: typeof _app) {
         res.json(file);
     });
 
+    // File preview
+    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/view`, async (req, res) => {
+        const { ownerId, projectId, fileId } = req.params;
+        const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
+
+        if (file === null) {
+            res.status(404).json({ error: "File not found." });
+            return;
+        }
+
+        const directoryPath = `${__dirname}/storage`;
+        const destination = `${directoryPath}/${fileId}.bin`;
+        if (!fs.existsSync(directoryPath) || !fs.existsSync(destination)) {
+            res.status(404).json({ error: "File not found." });
+            return;
+        }
+
+        const extIndex = file.name.lastIndexOf('.');
+        if (extIndex !== -1) {
+            const ext = file.name.substring(extIndex + 1).toLowerCase();
+            if (ext === "pdf") {
+                res.setHeader("Content-Type", "application/pdf")
+            }
+        }
+
+        res.setHeader("Content-Disposition", `inline; filename="content"`);
+        
+        console.log("Sent file download.");
+        res.sendFile(destination);
+    });
+
     // File downloading
     app.get(`/api/projects/:ownerId/:projectId/files/:fileId/content`, async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
