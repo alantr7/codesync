@@ -1,4 +1,5 @@
 import ex, { json } from 'express';
+import cors from 'cors';
 import { setupProjectsController } from './controller_projects';
 import { setupDatabase } from './datasource';
 import { configDotenv } from 'dotenv';
@@ -8,6 +9,7 @@ configDotenv();
 setupDatabase();
 
 export const app = ex();
+app.use(cors());
 app.use(json());
 
 setupProjectsController(app);
