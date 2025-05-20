@@ -76,6 +76,7 @@ export default function SearchView() {
 
         <hr />
         <h4>Status: {status}</h4>
+        {hasError && <h3>There was an error!</h3>}
         Results for: '{query}'
 
         <table>
