@@ -123,7 +123,7 @@ export namespace RemoteUtils {
                     console.log(chalk.redBright(" " + e.response.data.error + " (" + e.response.status + ")"));
                     return Promise.resolve(undefined);
                 }
-                console.log(chalk.redBright(' There was an error in HTTP request!'));
+                console.log(chalk.redBright(' There was an error in HTTP request! ' + e.response?.status));
                 return Promise.resolve(undefined);
             }
         };
