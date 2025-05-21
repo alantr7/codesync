@@ -66,10 +66,10 @@ export function parseJwt(token: string): any | undefined {
 }
 
 function verifyBearer(bearer: string) {
-    if (!bearer.startsWith("explorer_"))
+    if (!bearer.startsWith("Bearer explorer_"))
         return undefined;
 
-    const token = bearer.substring("Bearer ".length);
+    const token = bearer.substring("Bearer explorer_".length);
     return parseJwt(token) !== undefined;
 }
 
