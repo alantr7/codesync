@@ -5,12 +5,14 @@ import { Mapper } from "./Mapper";
 import fs from 'fs';
 import path from 'path';
 import chalk from "chalk";
+import { Config } from "../app/Config";
 
 export namespace RemoteUtils {
 
     const api = axios.create({
         baseURL: process.env.REMOTE_BASE_URL + '/api',
         headers: {
+            "Authorization": "Bearer " + Config.config.authtoken,
             "Content-Type": "application/json"
         }
     });

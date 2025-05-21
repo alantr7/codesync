@@ -9,10 +9,11 @@ export const MetaDirectory = `${ProjectDirectory}/.codesync`;
 configDotenv({path: __dirname + "/.env"});
 
 import { Config } from "./app/Config";
-import { CommandExecutor } from "./commands/CommandExecutor";
-import { Project } from "./app/Project";
 const { setupConfig } = Config;
 setupConfig();
+
+import { CommandExecutor } from "./commands/CommandExecutor";
+import { Project } from "./app/Project";
 
 export const CurrentProject = new Project(ProjectDirectory);
 

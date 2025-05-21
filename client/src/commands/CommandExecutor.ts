@@ -30,6 +30,11 @@ export namespace CommandExecutor {
         "delete": "Delete data about this project both locally and on the server (This will not delete project files!)"
     };
 
+    // Commands that do not require authtoken
+    const LocalCommands = [
+        "help", "config", "ignore"
+    ];
+
     export async function question(question: string): Promise<string> {
         return new Promise((resolve, reject) => scanner.question(question, resolve));
     }
@@ -43,6 +48,12 @@ export namespace CommandExecutor {
 
         const command = args[0];
         args.splice(0, 1);
+
+        if (Config.config["authtoken"].length === 0 && !LocalCommands.includes(command)) {
+            console.error(chalk.redBright(` Please configure the 'authtoken' before using this command.`));
+            scanner.close();
+            return;
+        }
 
         switch (command) {
             case "help": executeHelpCommand(); break;
