@@ -94,7 +94,7 @@ export default function SearchView() {
                     </td>
                     <td>
                         {file.preview_mode === "BINARY" && file.name}
-                        {file.preview_mode !== "BINARY" && <a href={`${HOST}/api/projects/${file.project_id}/files/${file.id}/view`} target="_blank">{file.name}</a>}
+                        {file.preview_mode !== "BINARY" && <a href={`${HOST}/api/projects/${file.project_id}/files/${file.id}/view?token=${file.access_token}`} target="_blank">{file.name}</a>}
                     </td>
                     <td><small>{file.project_id}</small>/{file.path}</td>
                 </tr>)}
