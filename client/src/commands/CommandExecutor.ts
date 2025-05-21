@@ -10,6 +10,7 @@ import { CodeSync } from "../app/App";
 import { Project } from "../app/Project";
 import open from 'open';
 import { FileWatcher } from "../local/FileWatcher";
+import { Config } from "../app/Config";
 
 export namespace CommandExecutor {
 
@@ -18,6 +19,7 @@ export namespace CommandExecutor {
     const CommandsList: Record<string, string> = {
         "help": "Get list of commands with their descriptions",
         "init": "Initialize a project locally and remotely",
+        "config": "Edit and inspect your CodeSync configuration",
         "overview": "Get basic information about the current project",
         "list": "List files in the current project",
         "list-projects": "List all projects available locally",
@@ -45,6 +47,7 @@ export namespace CommandExecutor {
         switch (command) {
             case "help": executeHelpCommand(); break;
             case "init": await LocalUtils.initializeProject(); break;
+            case "config": executeConfigCommand(args); break;
             case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles([CurrentProject])); break;
             case "list-all": await SyncUtils.printDiff(await SyncUtils.compareFiles(CodeSync.getLocalProjects().map(l => new Project(l.path))), true); break;
             case "list-projects": LocalUtils.printLocalPrograms(); break;
@@ -66,7 +69,9 @@ export namespace CommandExecutor {
                 open(`${CurrentProject.path}\\.codesync\\ignore.json`);
                 break;
             case "delete": await (await CurrentProject.getRemote())?.delete(); break;
-            default: console.log(chalk.redBright(' Command not recognized.') + '\n Available commands: ' + chalk.yellow(Object.keys(CommandsList).join(', ')));
+            default:
+                executeHelpCommand();
+                console.log(chalk.redBright('\n Command not recognized.'));
         }
 
         scanner.close();
@@ -76,6 +81,33 @@ export namespace CommandExecutor {
         for (const name in CommandsList) {
             console.log(" " + chalk.yellowBright(name) + ": " + CommandsList[name]);
         }
+    }
+
+    function executeConfigCommand(args: string[]) {
+        if (args.length === 0) {
+            console.error(chalk.redBright(` Usage: codesync config <key> [value]`));
+            return;
+        }
+
+        const key = args[0];
+        if (args.length === 1) {
+            // @ts-ignore
+            const value = Config.config[key];
+
+            if (value === undefined) {
+                console.error(chalk.redBright(` ${key} is not set.`));
+                return;
+            }
+
+            console.log(` ${key}: ` + chalk.blueBright(value));
+            return;
+        }
+
+        const value = args[1];
+        // @ts-ignore
+        Config.set(key, value);
+
+        console.log(chalk.yellowBright(` Config value updated.`));
     }
 
 }

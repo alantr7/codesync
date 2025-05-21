@@ -12,7 +12,7 @@ export namespace Config {
     }
     
     let configPath: string;
-    let config: ConfigProps;
+    export let config: ConfigProps;
     export function setupConfig() {
         const dataPath = `${AppDirectory}/data`;
         if (!fs.existsSync(dataPath))
