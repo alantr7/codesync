@@ -42,7 +42,7 @@ export function auth(...roles: Role[]) {
                 return;
             }
 
-            if (authtoken !== config.authtoken) {
+            if (authtoken.substring("Bearer ".length) !== config.authtoken) {
                 res.sendStatus(403);
                 return;
             }
@@ -66,6 +66,9 @@ export function parseJwt(token: string): any | undefined {
 }
 
 function verifyBearer(bearer: string) {
+    if (!bearer.startsWith("explorer_"))
+        return undefined;
+
     const token = bearer.substring("Bearer ".length);
     return parseJwt(token) !== undefined;
 }
@@ -75,5 +78,5 @@ export function authenticate(password: string): string | undefined {
         return undefined;
     }
 
-    return jwt.sign({user: "alantr7"}, config.secret);
+    return "explorer_" + jwt.sign({user: "alantr7"}, config.secret);
 }
