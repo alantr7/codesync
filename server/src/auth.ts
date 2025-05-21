@@ -2,13 +2,33 @@ import { NextFunction, Request, Response } from "express";
 import { config } from "./config";
 import jwt from 'jsonwebtoken';
 
-type Role = "explorer" | "codesync";
+export type Role = "filetoken" | "explorer" | "codesync";
 export function auth(...roles: Role[]) {
     return (req: Request, res: Response, next: NextFunction) => {
         // Not so strict authentication/authorization (explorer is read-only)
         if (roles.includes("explorer")) {
             const token = req.headers.authorization;
-            if (typeof token === 'string' && verify(token)) {
+            if (typeof token === 'string' && verifyBearer(token)) {
+                Object.assign(req, { role: "explorer" });
+
+                next();
+                return;
+            }
+        }
+
+        // Short-lived file-read access tokens
+        if (roles.includes("filetoken")) {
+            const { fileId } = req.params;
+            const { token } = req.query;
+            if (fileId !== null && typeof token === "string") {
+                const data = parseJwt(token);
+                if (data === undefined || fileId !== data.file) {
+                    res.sendStatus(403);
+                    return;
+                }
+
+                Object.assign(req, { role: "filetoken" });
+
                 next();
                 return;
             }
@@ -27,6 +47,8 @@ export function auth(...roles: Role[]) {
                 return;
             }
 
+            Object.assign(req, { role: "codesync" });
+
             next();
             return;
         }
@@ -35,9 +57,17 @@ export function auth(...roles: Role[]) {
     }
 }
 
-function verify(bearer: string) {
+export function parseJwt(token: string): any | undefined {
+    try {
+        return jwt.verify(token, config.secret, {complete: true})?.payload;
+    } catch {
+        return undefined;
+    }
+}
+
+function verifyBearer(bearer: string) {
     const token = bearer.substring("Bearer ".length);
-    return jwt.verify(token, config.secret)
+    return parseJwt(token) !== undefined;
 }
 
 export function authenticate(password: string): string | undefined {

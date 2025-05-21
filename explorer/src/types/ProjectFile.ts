@@ -5,5 +5,6 @@ export type ProjectFile = {
     last_modified: string,
     size: number,
     is_uploaded: boolean,
-    is_deleted: boolean
+    is_deleted: boolean,
+    access_token?: string
 }

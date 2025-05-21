@@ -7,8 +7,11 @@ import mime from 'mime';
 import multer from 'multer';
 import fs from 'fs';
 import { auth } from './auth';
+import jwt from 'jsonwebtoken';
+import { config } from './config';
 
 export function setupFilesController(app: typeof _app) {
+    // File list
     app.get('/api/projects/:ownerId/:projectId/files', auth("explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId } = req.params;
 
@@ -26,7 +29,19 @@ export function setupFilesController(app: typeof _app) {
         if (files.length === 0) {
             console.error('Didnt find a single file for project', project);
         }
-        res.json(files);
+
+        if (req.role !== "explorer") {
+            res.json(files);
+        } else {
+            res.json(files.map(file => ({
+                ...file,
+                access_token: jwt.sign({
+                    file: file.id,
+                }, config.secret, {
+                    expiresIn: 600
+                })
+            })));
+        }
     });
 
     app.post('/api/projects/:ownerId/:projectId/files', auth("codesync"), async (req, res) => {
@@ -110,7 +125,7 @@ export function setupFilesController(app: typeof _app) {
     });
 
     // File preview
-    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/view`, auth("explorer", "codesync"), async (req, res) => {
+    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/view`, auth("filetoken", "explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
@@ -142,7 +157,7 @@ export function setupFilesController(app: typeof _app) {
     });
 
     // File downloading
-    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/content`, auth("explorer", "codesync"), async (req, res) => {
+    app.get(`/api/projects/:ownerId/:projectId/files/:fileId/content`, auth("filetoken", "explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
