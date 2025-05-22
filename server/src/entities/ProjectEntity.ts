@@ -12,4 +12,7 @@ export class ProjectEntity extends BaseEntity {
     @Column()
     date_created?: Date;
 
+    @Column()
+    owner_id?: string;
+
 }

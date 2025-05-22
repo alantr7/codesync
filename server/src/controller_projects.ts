@@ -6,19 +6,18 @@ import fs from 'fs';
 import { auth } from './auth';
 
 export function setupProjectsController(app: typeof _app) {
-    app.get(`/api/projects/:ownerId`, auth("explorer", "codesync"), async (req, res) => {
-        const { ownerId } = req.params;
-        const projects = await ProjectEntity.find();
-
+    app.get(`/api/projects`, auth("explorer", "codesync"), async (req, res) => {
+        const projects = await ProjectEntity.findBy({owner_id: req.user});
         res.json(projects);
     });
 
     app.post(`/api/projects`, auth("codesync"), (req, res) => {
         const { name } = req.body;
         const project = Object.assign(new ProjectEntity(), {
-            id: "alantr7/" + name,
+            id: req.user + "/" + name,
             name,
-            date_created: new Date()
+            owner_id: req.user,
+            date_created: new Date(),
         });
 
         ProjectEntity.save(project);

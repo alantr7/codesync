@@ -21,14 +21,17 @@ export function setupFilesController(app: typeof _app) {
             return;
         }
 
+        // Check project ownership
+        if (!checkProjectAccess(project, req.user as string)) {
+            res.status(403).end();
+            return;
+        }
+
         const files = await FileEntity.find({where: {
             project: {
                 id: ownerId + '/' + projectId
             }
         }});
-        if (files.length === 0) {
-            console.error('Didnt find a single file for project', project);
-        }
 
         if (req.role !== "explorer") {
             res.json(files);
@@ -36,6 +39,7 @@ export function setupFilesController(app: typeof _app) {
             res.json(files.map(file => ({
                 ...file,
                 access_token: jwt.sign({
+                    user: req.user,
                     file: file.id,
                 }, config.secret, {
                     expiresIn: 600
@@ -44,6 +48,7 @@ export function setupFilesController(app: typeof _app) {
         }
     });
 
+    // Create a new file
     app.post('/api/projects/:ownerId/:projectId/files', auth("codesync"), async (req, res) => {
         const { ownerId, projectId } = req.params;
         const { files } = req.body;
@@ -58,6 +63,12 @@ export function setupFilesController(app: typeof _app) {
         const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
         if (project === null) {
             res.status(404).end();
+            return;
+        }
+
+        // Check project ownership
+        if (!checkProjectAccess(project, req.user as string)) {
+            res.status(403).end();
             return;
         }
 
@@ -98,6 +109,18 @@ export function setupFilesController(app: typeof _app) {
             return;
         }
 
+        const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
+        if (project === null) {
+            res.status(404).end();
+            return;
+        }
+
+        // Check project ownership
+        if (!checkProjectAccess(project, req.user as string)) {
+            res.status(403).end();
+            return;
+        }
+
         // Check if file exists on the server
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
         if (file === null) {
@@ -127,6 +150,19 @@ export function setupFilesController(app: typeof _app) {
     // File preview
     app.get(`/api/projects/:ownerId/:projectId/files/:fileId/view`, auth("filetoken", "explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
+        
+        const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
+        if (project === null) {
+            res.status(404).end();
+            return;
+        }
+
+        // Check project ownership
+        if (!checkProjectAccess(project, req.user as string)) {
+            res.status(403).end();
+            return;
+        }
+
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
         if (file === null) {
@@ -159,6 +195,19 @@ export function setupFilesController(app: typeof _app) {
     // File downloading
     app.get(`/api/projects/:ownerId/:projectId/files/:fileId/content`, auth("filetoken", "explorer", "codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
+
+        const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
+        if (project === null) {
+            res.status(404).end();
+            return;
+        }
+
+        // Check project ownership
+        if (!checkProjectAccess(project, req.user as string)) {
+            res.status(403).end();
+            return;
+        }
+
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
         if (file === null) {
@@ -180,6 +229,19 @@ export function setupFilesController(app: typeof _app) {
     // File deleting
     app.delete(`/api/projects/:ownerId/:projectId/files/:fileId`, auth("codesync"), async (req, res) => {
         const { ownerId, projectId, fileId } = req.params;
+
+        const project = await ProjectEntity.findOneBy({id: `${ownerId}/${projectId}`});
+        if (project === null) {
+            res.status(404).end();
+            return;
+        }
+
+        // Check project ownership
+        if (!checkProjectAccess(project, req.user as string)) {
+            res.status(403).end();
+            return;
+        }
+
         const file = await FileEntity.findOneBy({id: fileId, project: { id: ownerId + '/' + projectId }});
 
         if (file === null) {
@@ -202,4 +264,8 @@ export function setupFilesController(app: typeof _app) {
             message: "File deleted."
         });
     });
+}
+
+function checkProjectAccess(project: ProjectEntity, username: string): boolean {
+    return project.owner_id === username;
 }

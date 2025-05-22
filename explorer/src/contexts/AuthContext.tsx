@@ -30,10 +30,13 @@ export function AuthContextProvider(props: any) {
     const handleSignIn = (e: any) => {
         e.preventDefault();
 
+        const username = prompt("Enter the username:");
+        if (username === null) return;
+
         const password = prompt("Enter the password:");
         if (password === null) return;
 
-        axios.post(`${HOST}/auth`, {password}).then(r => {
+        axios.post(`${HOST}/auth`, {username, password}).then(r => {
             const token = (r.data as any).token as string;
             window.localStorage.setItem("authtoken", token);
 

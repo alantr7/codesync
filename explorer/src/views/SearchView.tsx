@@ -36,7 +36,7 @@ export default function SearchView() {
 
         setStatus(STATUS_PROJ_LIST);
 
-        axios.get(`${HOST}/api/projects/alantr7`).then(async r => {
+        axios.get(`${HOST}/api/projects`).then(async r => {
             const projects = r.data as ProjectListItem[];
             let idx = 0;
             for (const project of projects) {

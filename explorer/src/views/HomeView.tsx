@@ -8,7 +8,7 @@ export default function HomeView() {
     const [  projectsList, setProjectsList ] = useState<ProjectListItem[]>([]);
     const { token } = useContext(AuthContext);
     useEffect(() => {
-        axios.get(`${HOST}/api/projects/alantr7`, {
+        axios.get(`${HOST}/api/projects`, {
             headers: {
                 "Authorization": "Bearer " + token
             }

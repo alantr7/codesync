@@ -1,6 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { config } from "./config";
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+
+export type User = {
+    username: string,
+    authtoken: string,
+    explorer_password: string,
+    role: "user" | "admin"
+};
+export const users: Record<string, User> = {};
+const ADMIN_USER: User = {
+    username: "admin",
+    authtoken: generateToken(32),
+    explorer_password: generateToken(24),
+    role: "admin"
+}
+
+console.log(`Admin Authtoken: ${ADMIN_USER.authtoken}`);
+console.log(`Explorer Password: ${ADMIN_USER.explorer_password}`);
 
 export type Role = "filetoken" | "explorer" | "codesync";
 export function auth(...roles: Role[]) {
@@ -8,8 +26,10 @@ export function auth(...roles: Role[]) {
         // Not so strict authentication/authorization (explorer is read-only)
         if (roles.includes("explorer")) {
             const token = req.headers.authorization;
-            if (typeof token === 'string' && verifyBearer(token)) {
-                Object.assign(req, { role: "explorer" });
+            let data: any;
+            if (typeof token === 'string' && (data = verifyBearer(token))) {
+                req.user = data.user;
+                req.role = "explorer";
 
                 next();
                 return;
@@ -27,7 +47,7 @@ export function auth(...roles: Role[]) {
                     return;
                 }
 
-                Object.assign(req, { role: "filetoken" });
+                Object.assign(req, { user: data.user, role: "filetoken" });
 
                 next();
                 return;
@@ -42,12 +62,15 @@ export function auth(...roles: Role[]) {
                 return;
             }
 
-            if (authtoken.substring("Bearer ".length) !== config.authtoken) {
+            const bearer = authtoken.substring("Bearer ".length);
+            const user = Object.values(users).find(usr => usr.authtoken === bearer);
+            if (user === undefined) {
                 res.sendStatus(403);
                 return;
             }
 
-            Object.assign(req, { role: "codesync" });
+            req.user = user.username;
+            req.role = "codesync";
 
             next();
             return;
@@ -70,13 +93,21 @@ function verifyBearer(bearer: string) {
         return undefined;
 
     const token = bearer.substring("Bearer explorer_".length);
-    return parseJwt(token) !== undefined;
+    return parseJwt(token);
 }
 
-export function authenticate(password: string): string | undefined {
-    if (password !== config.explorer_password) {
+export function authenticate(username: string, password: string): string | undefined {
+    if (password !== users[username]?.explorer_password) {
         return undefined;
     }
 
-    return "explorer_" + jwt.sign({user: "alantr7"}, config.secret);
+    return "explorer_" + jwt.sign({user: username}, config.secret);
+}
+
+function generateToken(length: number) {
+  return crypto.randomBytes(length)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 }
