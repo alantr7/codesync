@@ -123,7 +123,7 @@ export default function ProjectView() {
                         {file.preview_mode === "DOCUMENT" && <a href={`/view/code/${ownerId}/${projectId}/${file.id}`} target="_blank">{file.name}</a>}
                     </td>
                     <td>
-                        <a href="#">Download</a>
+                        <a href={`${HOST}/api/projects/${ownerId}/${projectId}/files/${file.id}/content?token=${file.access_token}`} target="_blank" download>Download</a>
                     </td>
                     <td>{formatSize(file.size)}</td>
                     <td>{new Date(parseInt(file.last_modified)).toLocaleString()}</td>
