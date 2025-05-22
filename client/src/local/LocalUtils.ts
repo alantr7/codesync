@@ -37,7 +37,7 @@ export namespace LocalUtils {
         await RemoteUtils.createProject(name);
 
         console.log();
-        console.log(" Project initialized!\nRemote URL: " + chalk.greenBright(data.remote));
+        console.log(" Remote URL: " + chalk.greenBright(data.remote) + "\n\n Project initialized!\n");
     }
 
     export function isProjectInitialized() {
