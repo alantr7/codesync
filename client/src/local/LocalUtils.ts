@@ -40,6 +40,10 @@ export namespace LocalUtils {
         console.log(" Project initialized!\nRemote URL: " + chalk.greenBright(data.remote));
     }
 
+    export function isProjectInitialized() {
+        return fs.existsSync(MetaDirectory) && fs.existsSync(`${MetaDirectory}/project.json`);
+    }
+
     export function printProjectOverview() {
         const project = CurrentProject.getLocal();
         console.log(" ID: " + chalk.yellowBright(project.id));

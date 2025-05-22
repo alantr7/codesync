@@ -35,6 +35,11 @@ export namespace CommandExecutor {
         "help", "config", "ignore"
     ];
 
+    // Commands that require an initialized project
+    const ProjectCommands = [
+        "list", "list-all", "push", "overview", "push-all", "fetch", "fetch-all", "ignore"
+    ];
+
     export async function question(question: string): Promise<string> {
         return new Promise((resolve, reject) => scanner.question(question, resolve));
     }
@@ -51,6 +56,12 @@ export namespace CommandExecutor {
 
         if (Config.config["authtoken"].length === 0 && !LocalCommands.includes(command)) {
             console.error(chalk.redBright(` Please configure the 'authtoken' before using this command.`));
+            scanner.close();
+            return;
+        }
+
+        if (!LocalUtils.isProjectInitialized() && ProjectCommands.includes(command)) {
+            console.error(chalk.redBright(` Project is not initialized.\n`));
             scanner.close();
             return;
         }
