@@ -3,12 +3,14 @@ import fs from 'fs';
 
 export type ConfigProps = {
     authtoken: string,
+    host: string,
 }
 
 export namespace Config {
     
     const DefaultConfig: ConfigProps = {
-        authtoken: ""
+        authtoken: "",
+        host: ""
     }
     
     let configPath: string;

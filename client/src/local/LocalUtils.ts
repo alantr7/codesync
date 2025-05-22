@@ -8,6 +8,7 @@ import { glob } from 'glob';
 import { CodeSync } from '../app/App';
 import asTable from 'as-table';
 import { LocalProject } from './LocalProject';
+import { Config } from '../app/Config';
 
 export namespace LocalUtils {
 
@@ -23,7 +24,7 @@ export namespace LocalUtils {
         const data = {
             id: "alantr7/" + name,
             name,
-            remote: `${process.env.REMOTE_BASE_URL}/alantr7/${name}`
+            remote: `${Config.config.host}/alantr7/${name}`
         }
 
         if (!fs.existsSync(MetaDirectory)) {

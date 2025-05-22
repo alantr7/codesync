@@ -10,7 +10,7 @@ import { Config } from "../app/Config";
 export namespace RemoteUtils {
 
     const api = axios.create({
-        baseURL: process.env.REMOTE_BASE_URL + '/api',
+        baseURL: Config.config.host + '/api',
         headers: {
             "Authorization": "Bearer " + Config.config.authtoken,
             "Content-Type": "application/json"

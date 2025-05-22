@@ -25,7 +25,7 @@ export function resetConsole() {
     console.log("\n" + chalk.blueBright(' CodeSync ') + chalk.greenBright('v1.0.0'));
 
     console.log(`\n Working directory: ` + chalk.blueBright(`${ProjectDirectory}`));
-    console.log(` Base URL: ` + chalk.blueBright(process.env.REMOTE_BASE_URL).replace('http://', '').replace('https://', '') + '\n');
+    console.log(` Host: ` + (Config.config.host.length > 0 ? chalk.blueBright(Config.config.host).replace('http://', '').replace('https://', '') : chalk.gray("Not configured")) + '\n');
 }
 
 resetConsole();

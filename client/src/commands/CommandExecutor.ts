@@ -53,6 +53,12 @@ export namespace CommandExecutor {
         const command = args[0];
         args.splice(0, 1);
 
+        if (Config.config["host"].length === 0 && !LocalCommands.includes(command)) {
+            console.error(chalk.redBright(` Please configure the 'host' before using this command.\n`));
+            scanner.close();
+            return;
+        }
+
         if (Config.config["authtoken"].length === 0 && !LocalCommands.includes(command)) {
             console.error(chalk.redBright(` Please configure the 'authtoken' before using this command.\n`));
             scanner.close();
