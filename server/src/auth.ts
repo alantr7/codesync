@@ -104,7 +104,7 @@ export function authenticate(username: string, password: string): string | undef
     return "explorer_" + jwt.sign({user: username}, config.secret);
 }
 
-function generateToken(length: number) {
+export function generateToken(length: number) {
   return crypto.randomBytes(length)
     .toString('base64')
     .replace(/\+/g, '-')
