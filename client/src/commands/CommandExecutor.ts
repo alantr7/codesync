@@ -21,7 +21,8 @@ export namespace CommandExecutor {
         "init": "Initialize a project locally and remotely",
         "config": "Edit and inspect your CodeSync configuration",
         "overview": "Get basic information about the current project",
-        "list": "List files in the current project",
+        "list [--diff]": "List files in the current project",
+        "list-all [--diff]": "List files in all available local projects",
         "list-projects": "List all projects available locally",
         "push [--watch]": "Upload changes to the server",
         "push-all": "Upload changes of all local projects to the server",
@@ -70,8 +71,8 @@ export namespace CommandExecutor {
             case "help": executeHelpCommand(); break;
             case "init": await LocalUtils.initializeProject(); break;
             case "config": executeConfigCommand(args); break;
-            case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles([CurrentProject])); break;
-            case "list-all": await SyncUtils.printDiff(await SyncUtils.compareFiles(CodeSync.getLocalProjects().map(l => new Project(l.path))), true); break;
+            case "list": await SyncUtils.printDiff(await SyncUtils.compareFiles([CurrentProject]), false, args.includes("--diff")); break;
+            case "list-all": await SyncUtils.printDiff(await SyncUtils.compareFiles(CodeSync.getLocalProjects().map(l => new Project(l.path))), true, args.includes("--diff")); break;
             case "list-projects": LocalUtils.printLocalPrograms(); break;
             case "push": {
                 if (args.length > 0 && args[0] === "--watch") {
