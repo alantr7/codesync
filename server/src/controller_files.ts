@@ -221,9 +221,17 @@ export function setupFilesController(app: typeof _app) {
             res.status(404).json({ error: "File not found." });
             return;
         }
+
+        const extIndex = file.name.lastIndexOf('.');
+        if (extIndex !== -1) {
+            const ext = file.name.substring(extIndex + 1).toLowerCase();
+            const type = mime.lookup(ext);
+            if (type) {
+                res.setHeader("Content-Type", type);
+            }
+        }
         
-        console.log("Sent file download.");
-        res.sendFile(destination);
+        res.download(destination, file.name);
     });
 
     // File deleting
