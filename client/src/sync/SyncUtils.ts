@@ -136,7 +136,7 @@ export namespace SyncUtils {
             : row => ({ " Status": " " + row[0], "File Path": row[1] });
 
         console.log(asTable(rows.map(mapper)));
-        console.log(chalk.yellowBright('\n There were ' + comparison.filter(r => r.result !== ComparisonResult.UP_TO_DATE).length + ' changes in total.'));
+        console.log(chalk.yellowBright('\n There were ' + comparison.filter(r => r.result !== ComparisonResult.UP_TO_DATE).length + ' changes in total.\n'));
     }
 
     interface ProjectQueue {

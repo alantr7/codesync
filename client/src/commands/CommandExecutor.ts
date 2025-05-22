@@ -1,11 +1,8 @@
 import chalk from "chalk";
-import { CurrentProject, MetaDirectory } from "../app";
-import fs from 'fs';
+import { CurrentProject } from "../app";
 import readline from 'node:readline';
-import { RemoteUtils } from "../remote/RemoteUtils";
 import { LocalUtils } from "../local/LocalUtils";
 import { SyncUtils } from "../sync/SyncUtils";
-import { glob } from "glob";
 import { CodeSync } from "../app/App";
 import { Project } from "../app/Project";
 import open from 'open';
@@ -38,7 +35,7 @@ export namespace CommandExecutor {
 
     // Commands that require an initialized project
     const ProjectCommands = [
-        "list", "list-all", "push", "overview", "push-all", "fetch", "fetch-all", "ignore"
+        "list", "list-all", "push", "overview", "push-all", "fetch", "fetch-all", "ignore", "delete"
     ];
 
     export async function question(question: string): Promise<string> {
@@ -47,7 +44,8 @@ export namespace CommandExecutor {
 
     export async function execute(args: string[]) {
         if (args.length === 0) {
-            console.error(chalk.redBright(' No arguments provided!') + '\n Available commands: ' + chalk.yellow(Object.keys(CommandsList).join(', ')));
+            executeHelpCommand();
+            console.error(chalk.redBright('\n No arguments provided!') + '\n');
             scanner.close();
             return;
         }
@@ -56,7 +54,7 @@ export namespace CommandExecutor {
         args.splice(0, 1);
 
         if (Config.config["authtoken"].length === 0 && !LocalCommands.includes(command)) {
-            console.error(chalk.redBright(` Please configure the 'authtoken' before using this command.`));
+            console.error(chalk.redBright(` Please configure the 'authtoken' before using this command.\n`));
             scanner.close();
             return;
         }
@@ -88,13 +86,13 @@ export namespace CommandExecutor {
             case "fetch": await SyncUtils.fetch([CurrentProject]); break;
             case "fetch-all": await SyncUtils.fetch(CodeSync.getLocalProjects().map(l => new Project(l.path))); break;
             case "ignore":
-                console.log(chalk.yellowBright(" Opening ignore.json file."));
+                console.log(chalk.yellowBright(" Opening ignore.json file.\n"));
                 open(`${CurrentProject.path}\\.codesync\\ignore.json`);
                 break;
             case "delete": await (await CurrentProject.getRemote())?.delete(); break;
             default:
                 executeHelpCommand();
-                console.log(chalk.redBright('\n Command not recognized.'));
+                console.log(chalk.redBright('\n Command not recognized.\n'));
         }
 
         scanner.close();
@@ -108,7 +106,7 @@ export namespace CommandExecutor {
 
     function executeConfigCommand(args: string[]) {
         if (args.length === 0) {
-            console.error(chalk.redBright(` Usage: codesync config <key> [value]`));
+            console.error(chalk.redBright(` Usage: codesync config <key> [value]\n`));
             return;
         }
 
@@ -118,11 +116,11 @@ export namespace CommandExecutor {
             const value = Config.config[key];
 
             if (value === undefined) {
-                console.error(chalk.redBright(` ${key} is not set.`));
+                console.error(chalk.redBright(` ${key} is not set.\n`));
                 return;
             }
 
-            console.log(` ${key}: ` + chalk.blueBright(value));
+            console.log(` "${key}": ${chalk.blueBright(value)}\n`);
             return;
         }
 
@@ -130,7 +128,7 @@ export namespace CommandExecutor {
         // @ts-ignore
         Config.set(key, value);
 
-        console.log(chalk.yellowBright(` Config value updated.`));
+        console.log(chalk.yellowBright(` Config value updated.\n`));
     }
 
 }

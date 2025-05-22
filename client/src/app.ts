@@ -22,7 +22,7 @@ args.splice(0, 2);
 
 export function resetConsole() {
     process.stdout.write('\x1Bc');
-    console.log(chalk.bgBlueBright.whiteBright(' CodeSync ') + chalk.bgMagenta.white(' v1.0.0                             '));
+    console.log("\n" + chalk.blueBright(' CodeSync ') + chalk.greenBright('v1.0.0'));
 
     console.log(`\n Working directory: ` + chalk.blueBright(`${ProjectDirectory}`));
     console.log(` Base URL: ` + chalk.blueBright(process.env.REMOTE_BASE_URL).replace('http://', '').replace('https://', '') + '\n');
