@@ -119,7 +119,8 @@ export default function ProjectView() {
                     </td>
                     <td>
                         {file.preview_mode === "BINARY" && file.name}
-                        {file.preview_mode !== "BINARY" && <a href={`${HOST}/api/projects/${ownerId}/${projectId}/files/${file.id}/view?token=${file.access_token}`} target="_blank">{file.name}</a>}
+                        {file.preview_mode !== "BINARY" && file.preview_mode !== "DOCUMENT" && <a href={`${HOST}/api/projects/${ownerId}/${projectId}/files/${file.id}/view?token=${file.access_token}`} target="_blank">{file.name}</a>}
+                        {file.preview_mode === "DOCUMENT" && <a href={`/view/code/${ownerId}/${projectId}/${file.id}`} target="_blank">{file.name}</a>}
                     </td>
                     <td>
                         <a href="#">Download</a>

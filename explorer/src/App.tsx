@@ -4,6 +4,7 @@ import HomeView from './views/HomeView'
 import ProjectView from './views/ProjectView'
 import SearchView from './views/SearchView';
 import { AuthContextProvider } from './contexts/AuthContext';
+import CodeView from './views/CodeView';
 
 export const HOST = import.meta.env.VITE_CODESYNC_HOST;
 
@@ -15,6 +16,7 @@ function App() {
             <Routes>
               <Route path='' element={<HomeView />}></Route>
               <Route path='/search' element={<SearchView />} ></Route>
+              <Route path='/view/code/:ownerId/:projectId/:fileId' element={<CodeView />} ></Route>
               <Route path='/project/:ownerId/:projectId' element={<ProjectView />} ></Route>
             </Routes>
         </BrowserRouter>
