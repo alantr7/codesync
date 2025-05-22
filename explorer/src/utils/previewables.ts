@@ -1,10 +1,18 @@
 const PREVIEWS: Record<string, PREVIEW_MODES> = {
-    "pdf": "PDF",
+    "pdf":      "PDF",
 
-    "png": "IMAGE",
-    "jpg": "IMAGE",
+    "png":      "IMAGE",
+    "jpg":      "IMAGE",
 
-    "java": "DOCUMENT"
+    "md":       "DOCUMENT",
+    "html":     "DOCUMENT",
+    "java":     "DOCUMENT",
+    "js":       "DOCUMENT",
+    "ts":       "DOCUMENT",
+    "json":     "DOCUMENT",
+    "tsx":      "DOCUMENT",
+    "css":      "DOCUMENT",
+    "scss":     "DOCUMENT",
 }
 export type PREVIEW_MODES = "IMAGE" | "DOCUMENT" | "PDF" | "BINARY";
 export function getPreviewMode(name: string): PREVIEW_MODES {
